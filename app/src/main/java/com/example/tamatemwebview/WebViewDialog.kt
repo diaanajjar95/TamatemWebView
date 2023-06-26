@@ -41,7 +41,7 @@ class WebViewDialog : DialogFragment() {
             dismissAllowingStateLoss()
         }
 
-        view.findViewById<AppCompatImageView>(R.id.backBtn).setOnClickListener {
+        view.findViewById<AppCompatImageView>(R.id.backImg).setOnClickListener {
             if (webView.canGoBack()) {
                 webView.goBack()
             } else {
@@ -53,7 +53,7 @@ class WebViewDialog : DialogFragment() {
             }
         }
 
-        view.findViewById<AppCompatImageView>(R.id.forewordBtn).setOnClickListener {
+        view.findViewById<AppCompatImageView>(R.id.forewordImg).setOnClickListener {
             if (webView.canGoForward()) {
                 webView.goForward()
             } else {
@@ -65,7 +65,7 @@ class WebViewDialog : DialogFragment() {
             }
         }
 
-        view.findViewById<AppCompatImageView>(R.id.refreshBtn).setOnClickListener {
+        view.findViewById<AppCompatImageView>(R.id.refreshImg).setOnClickListener {
             webView.reload()
         }
 
@@ -79,21 +79,13 @@ class WebViewDialog : DialogFragment() {
         webView.loadUrl(url)
 
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(
-                view: WebView,
-                request: WebResourceRequest
-            ): Boolean {
-                return super.shouldOverrideUrlLoading(view, request)
-            }
 
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
-                lottieLoader.visibility = View.VISIBLE
-                super.onPageStarted(view, url, favicon)
+                showLoader()
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-                lottieLoader.visibility = View.GONE
-                super.onPageFinished(view, url)
+                hideLoader()
             }
 
             override fun onReceivedError(
@@ -101,7 +93,9 @@ class WebViewDialog : DialogFragment() {
                 request: WebResourceRequest?,
                 error: WebResourceError?
             ) {
-                Log.d(TAG, "onReceivedError: ${error?.errorCode}")
+                error?.let {
+                    Log.d(TAG, "onReceivedError: errorCode : ${it.errorCode}")
+                }
             }
 
             override fun onReceivedHttpError(
@@ -109,16 +103,28 @@ class WebViewDialog : DialogFragment() {
                 request: WebResourceRequest?,
                 errorResponse: WebResourceResponse?
             ) {
-                val statusCode = errorResponse!!.statusCode
-                Log.d(TAG, "onReceivedHttpError: statusCode : $statusCode")
+                errorResponse?.let {
+                    Log.d(TAG, "onReceivedHttpError: statusCode : ${it.statusCode}")
+                }
             }
         }
     }
 
+    private fun showLoader() {
+        lottieLoader.visibility = View.VISIBLE
+    }
+
+    private fun hideLoader() {
+        lottieLoader.visibility = View.GONE
+    }
+
+    /**
+     * responsible to adjust the layout parameters of the dialog.
+     * */
     override fun onStart() {
         super.onStart()
         val dialog = dialog
-        if (dialog != null && dialog.window != null) {
+        dialog?.window?.let {
             dialog.window?.setLayout(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
