@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Tamatem WebView</string>
+    <string name="open_browser_text">Open Browser</string>
+    <string name="ok">Ok</string>
+    <string name="go_back_error_message">you can\'t go back</string>
+    <string name="go_foreword_error_message">you can\'t go foreword</string>
+</resources>
